@@ -30,12 +30,13 @@ struct ALUNO *criar_novo_aluno(struct ALUNO *topo, struct ALUNO *fim)
 	printf("INSIRA O NOME DO ALUNO\n");
 	scanf(" %50[^\n]",&p->nome_aluno);	
 	fflush(stdin);
-	printf("INSIRA O CPF DO ALUNO (Somente numeros) \n");
+	printf("INSIRA O CPF DO ALUNO\n");
 	scanf("%s", &p->cpf);
 	fflush(stdin);
-	printf("INSIRA A DATA DE NASCIMENTO DO ALUNO (DDMMAAAA)\n");
+	printf("INSIRA A DATA DE NASCIMENTO DO ALUNO\n");
 	scanf("%s",&p->data_nascimento);
 	fflush(stdin);
+	getch();
 
 	if(topo == NULL)
 	{
