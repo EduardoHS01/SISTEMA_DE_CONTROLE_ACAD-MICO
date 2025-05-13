@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <iostream>
+#include<ctype.h>
 
 #include "aluno.h"
 #include "professor.h"
@@ -24,7 +25,7 @@ char formatar_cpf_aluno(char cpf[11], struct ALUNO *fim){
 	fim->cpf[12] = cpf[9];
 	fim->cpf[11] = '-';
 	fim->cpf[13] = cpf[10];
-	fim->cpf[14] = '\0'; // termina a string
+	fim->cpf[14] = '\0';
 }
 
 char formatar_data_aluno(char data[8], struct ALUNO *fim){
@@ -73,5 +74,21 @@ char formatar_cpf_professor(char cpf[11], struct PROFESSOR *fim){
 	fim->cpf[12] = cpf[9];
 	fim->cpf[11] = '-';
 	fim->cpf[13] = cpf[10];
-	fim->cpf[14] = '\0'; // termina a string
+	fim->cpf[14] = '\0';
 }
+
+void removerFormatacaoCPF(const char *cpfFormatado, char *cpfLimpo) {
+    int j = 0;
+    for (int i = 0; cpfFormatado[i] != '\0'; i++) {
+        if (isdigit(cpfFormatado[i])) {
+            cpfLimpo[j++] = cpfFormatado[i];
+        }
+    }
+    cpfLimpo[j] = '\0';
+}
+
+void converterString(char *string){
+	for (int i = 0; string[i] != '\0'; i++) {
+        string[i] = toupper(string[i]);
+    }
+} 

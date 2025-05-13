@@ -3,6 +3,7 @@
 #include<conio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<ctype.h>
 
 #include "aluno.h"
 #include "funcoes.h"
@@ -17,12 +18,15 @@ void criar_novo_aluno()
 	system("cls");
 	char cpf[11];
 	char data[8];
+	char nome[50];
 	struct ALUNO *p = NULL;
 	cod_aluno++;
 	p = (struct ALUNO*)malloc(sizeof(struct ALUNO));
 	p->cod_aluno = cod_aluno; 
 	printf("INSIRA O NOME DO ALUNO\n");
-	scanf(" %50[^\n]",&p->nome_aluno);	
+	scanf(" %50[^\n]", &nome);
+	converterString(nome);
+	strcpy(p->nome_aluno, nome);	
 	fflush(stdin);
 	printf("INSIRA O CPF DO ALUNO\n");
 	scanf("%s", &cpf);
@@ -61,19 +65,72 @@ void criar_novo_aluno()
 
 void consultar_alunos(){
 	system("cls");
-	printf("Informe o nome do aluno a ser consultado \n");
-	char nomeConsulta[50];
-	scanf(" %50[^\n]", &nomeConsulta);
+	int escolhaConsulta;
+	printf("1-Consultar por nome \n2-Consultar por CPF \n3-Consultar por codigo \n");
+	scanf("%d", &escolhaConsulta);
+	
 	int contadorALunos = 0;
 	
-	aux_aluno = topo_aluno;
-	while(aux_aluno != NULL){
-		if (strcmp(aux_aluno->nome_aluno, nomeConsulta) == 0){
-			printf("ID:%d \nNOME:%s \nCPF:%s \nDATA DE NASCIMENTO:%s \nENDERECO ALUNO:%p \nSTATUS ALUNO:%p \n", aux_aluno->cod_aluno, aux_aluno->nome_aluno, aux_aluno->cpf, aux_aluno->data_nascimento, topo_aluno);	
-			contadorALunos++;
-		}
+	switch(escolhaConsulta){
+		case 1:
+			char nomeConsulta[50];
+			printf("Insira o nome a ser consultado \n");
+			scanf(" %50[^\n]", &nomeConsulta);
+			converterString(nomeConsulta);
+			
+			aux_aluno = topo_aluno;
+			while(aux_aluno != NULL){
+			if (strstr(aux_aluno->nome_aluno, nomeConsulta) != NULL){
+				printf("\nID:%d \nNOME:%s \nCPF:%s \nDATA DE NASCIMENTO:%s \nENDERECO ALUNO:%p \nSTATUS ALUNO:%p \n", aux_aluno->cod_aluno, aux_aluno->nome_aluno, aux_aluno->cpf, aux_aluno->data_nascimento, topo_aluno);	
+				contadorALunos++;
+			}
 		
-		aux_aluno = aux_aluno->proximo;
+				aux_aluno = aux_aluno->proximo;
+			}
+			break;
+			
+		case 2: {
+		    char cpfConsulta[15];
+		    printf("Insira o CPF a ser consultado \n");
+		    scanf(" %14[^\n]", cpfConsulta);
+		
+		    char cpfConsultaLimpo[12];
+		    removerFormatacaoCPF(cpfConsulta, cpfConsultaLimpo);
+		
+		    aux_aluno = topo_aluno;
+		    while (aux_aluno != NULL) {
+		        char cpfArmazenadoLimpo[12];
+		        removerFormatacaoCPF(aux_aluno->cpf, cpfArmazenadoLimpo);
+		
+		        if (strcmp(cpfArmazenadoLimpo, cpfConsultaLimpo) == 0) {
+		            printf("\nID:%d \nNOME:%s \nCPF:%s \nDATA DE NASCIMENTO:%s \n",
+		                   aux_aluno->cod_aluno, aux_aluno->nome_aluno, aux_aluno->cpf, aux_aluno->data_nascimento);
+		            contadorALunos++;
+		        }
+		        aux_aluno = aux_aluno->proximo;
+		    }
+		    break;
+		}
+			
+		case 3:
+			int codigo;
+			printf("Insira o codigo a ser consultado \n");
+			scanf(" %d", &codigo);
+			
+			aux_aluno = topo_aluno;
+			while(aux_aluno != NULL){
+			if (aux_aluno->cod_aluno == codigo){
+				printf("\nID:%d \nNOME:%s \nCPF:%s \nDATA DE NASCIMENTO:%s \nENDERECO ALUNO:%p \nSTATUS ALUNO:%p \n", aux_aluno->cod_aluno, aux_aluno->nome_aluno, aux_aluno->cpf, aux_aluno->data_nascimento, topo_aluno);	
+				contadorALunos++;
+			}
+		
+				aux_aluno = aux_aluno->proximo;
+			}
+			break;
+			
+		default:
+			printf("Por favor, escolha uma opcao entre 1 e 3... \n");
+			break;
 	}
 	
 	if (contadorALunos == 0){
