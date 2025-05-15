@@ -14,7 +14,7 @@ struct ALUNO *fim_aluno = NULL;
 struct ALUNO *aux_aluno = NULL;
 
 bool validar_cpf_formatado(const char *cpf) {
-	if (strlen(cpf) != 14)//strlen s� v� at� o espa�o antes o \0, por isso 14
+	if (strlen(cpf) != 14)//strlen só vê até o espaço antes o \0, por isso 14
 		return false;
 	
 	for (int i = 0; i < 14; i++) {
@@ -97,6 +97,74 @@ void criar_novo_aluno() {
 	aux_aluno = topo_aluno;
 	getchar();
 }
+
+int pegar_codigo()
+{
+	int esc = 0;
+	printf("POR FAVOR INSIRA O ID DO ALUNO QUE DESEJA MANIPULAR:\n");
+	scanf("%d",&esc);
+	return esc;
+}
+void inativar_aluno()
+{
+	cod_aluno = pegar_codigo();
+    struct ALUNO *aux = topo_aluno;
+    
+    while(aux != NULL && aux->cod_aluno != cod_aluno)
+    {
+        aux = aux->proximo;
+    }
+    
+
+    if(aux == NULL)
+    {
+        printf("Aluno com código %d não encontrado.\n", cod_aluno);
+    }
+    
+    if(!aux->ativo)
+    {
+        printf("Aluno com código %d já está inativo.\n", cod_aluno);
+    }
+    
+    aux->ativo = false;
+    printf("Aluno com código %d marcado como inativo.\n", cod_aluno);
+	getch();
+}
+
+
+void excluir_aluno()
+{
+	cod_aluno = pegar_codigo();
+    struct ALUNO *aux = topo_aluno;
+    
+    while(aux != NULL && aux->cod_aluno != cod_aluno)
+    {
+        aux = aux->proximo;
+    }
+
+    if(aux == NULL)
+    {
+        printf("Aluno com código %d não encontrado.\n", cod_aluno);
+    }
+    if(aux->anterior == NULL)
+    {
+        topo_aluno = aux->proximo;
+        if(topo_aluno != NULL)
+        {
+            topo_aluno->anterior = NULL;
+        }
+    }
+    else
+    {
+        aux->anterior->proximo = aux->proximo;
+    }
+    if(aux->proximo != NULL)
+    {
+        aux->proximo->anterior = aux->anterior;
+    }
+    free(aux);  
+	getch();  
+    }
 
 void consultar_alunos(){
 	system("cls");
@@ -207,9 +275,10 @@ int menu_aluno(){
 	printf("Qual operacao deseja realizar? \n");
 	printf("1-Cadastrar novo aluno \n");
 	printf("2-Inativar cadastro de aluno \n");
-	printf("3-Consultar cadastro de aluno \n");
-	printf("4-Imprimir todos os alunos cadastrados \n");
-	printf("5-Voltar \n");
+	printf("3-Excluir cadastro de aluno \n");
+	printf("4-Consultar cadastro de aluno \n");
+	printf("5-Imprimir todos os alunos cadastrados \n");
+	printf("6-Voltar \n");
 	
 	int opcao;
 	scanf("%d", &opcao);
@@ -219,14 +288,18 @@ int menu_aluno(){
 			criar_novo_aluno();
 			break;	
 		case 2:
+			inativar_aluno();
+			break;
+		case 3:
+			excluir_aluno();
 			break;	
-		case 3:	
+		case 4:	
 			consultar_alunos();
 			break;
-		case 4:
+		case 5:
 			imprimir_alunos();
 			break;
-		case 5:
+		case 6:
 			break;
 		default:
 			printf("Selecione uma opcao disponivel \n");
@@ -237,4 +310,3 @@ int menu_aluno(){
 	}
 
 }
-
