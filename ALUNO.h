@@ -13,6 +13,7 @@ struct ALUNO
 };
 int menu_aluno();
 void inativar_aluno();
+void ativar_aluno();
 int pegar_codigo();
 void excluir_aluno();
 void imprimir_alunos();
