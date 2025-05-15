@@ -12,6 +12,9 @@ struct ALUNO
 	bool ativo;
 };
 int menu_aluno();
+void inativar_aluno();
+int pegar_codigo();
+void excluir_aluno();
 void imprimir_alunos();
 void consultar_alunos();
 void criar_novo_aluno();
