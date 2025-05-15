@@ -130,7 +130,31 @@ void inativar_aluno()
     printf("Aluno com código %d marcado como inativo.\n", cod_aluno);
 	getch();
 }
+void ativar_aluno()
+{
+	cod_aluno = pegar_codigo();
+    struct ALUNO *aux = topo_aluno;
+    
+    while(aux != NULL && aux->cod_aluno != cod_aluno)
+    {
+        aux = aux->proximo;
+    }
+    
 
+    if(aux == NULL)
+    {
+        printf("Aluno com código %d não encontrado.\n", cod_aluno);
+    }
+    
+    if(aux->ativo)
+    {
+        printf("Aluno com código %d já está ativo.\n", cod_aluno);
+    }
+    
+    aux->ativo = true;
+    printf("Aluno com código %d marcado como ativo.\n", cod_aluno);
+	getch();
+}
 
 void excluir_aluno()
 {
@@ -275,10 +299,11 @@ int menu_aluno(){
 	printf("Qual operacao deseja realizar? \n");
 	printf("1-Cadastrar novo aluno \n");
 	printf("2-Inativar cadastro de aluno \n");
-	printf("3-Excluir cadastro de aluno \n");
-	printf("4-Consultar cadastro de aluno \n");
-	printf("5-Imprimir todos os alunos cadastrados \n");
-	printf("6-Voltar \n");
+	printf("3-Ativar cadastro de aluno \n");
+	printf("4-Excluir cadastro de aluno \n");
+	printf("5-Consultar cadastro de aluno \n");
+	printf("6-Imprimir todos os alunos cadastrados \n");
+	printf("7-Voltar \n");
 	
 	int opcao;
 	scanf("%d", &opcao);
@@ -291,15 +316,18 @@ int menu_aluno(){
 			inativar_aluno();
 			break;
 		case 3:
+			ativar_aluno();
+			break;
+		case 4:
 			excluir_aluno();
 			break;	
-		case 4:	
+		case 5:	
 			consultar_alunos();
 			break;
-		case 5:
+		case 6:
 			imprimir_alunos();
 			break;
-		case 6:
+		case 7:
 			break;
 		default:
 			printf("Selecione uma opcao disponivel \n");
