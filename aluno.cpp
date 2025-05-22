@@ -155,7 +155,33 @@ void ativar_aluno()
     printf("Aluno com código %d marcado como ativo.\n", cod_aluno);
 	getch();
 }
-
+void modificar_aluno()
+{
+	char cpf[15];
+	char data[11];
+	char nome[50];
+	cod_aluno = pegar_codigo();
+    struct ALUNO *aux = topo_aluno;
+    
+    while(aux != NULL && aux->cod_aluno != cod_aluno)
+    {
+        aux = aux->proximo;
+    }
+    if(aux == NULL)
+    {
+        printf("Aluno com código %d não encontrado.\n", cod_aluno);
+    }
+	else
+	{   
+		ler_dados_aluno(nome,cpf,data);
+		aux->cod_aluno = cod_aluno;
+		strcpy(aux->nome_aluno, nome);
+		strcpy(aux->cpf, cpf);
+		strcpy(aux->data_nascimento, data);
+		printf("\nID:%d \nNOME:%s \nCPF:%s \nDATA DE NASCIMENTO:%s \nENDERECO ALUNO:%p \nSTATUS ALUNO:%p \n", aux_aluno->cod_aluno, aux_aluno->nome_aluno, aux_aluno->cpf, aux_aluno->data_nascimento, topo_aluno);	
+	}
+	getch();
+}
 void excluir_aluno()
 {
 	cod_aluno = pegar_codigo();
@@ -294,6 +320,7 @@ void imprimir_alunos()
 	getchar();	
 };
 
+
 int menu_aluno(){
 	system("cls");
 	printf("Qual operacao deseja realizar? \n");
@@ -301,9 +328,10 @@ int menu_aluno(){
 	printf("2-Inativar cadastro de aluno \n");
 	printf("3-Ativar cadastro de aluno \n");
 	printf("4-Excluir cadastro de aluno \n");
-	printf("5-Consultar cadastro de aluno \n");
-	printf("6-Imprimir todos os alunos cadastrados \n");
-	printf("7-Voltar \n");
+	printf("5-Modificar cadastro de aluno \n");
+	printf("6-Consultar cadastro de aluno \n");
+	printf("7-Imprimir todos os alunos cadastrados \n");
+	printf("8-Voltar \n");
 	
 	int opcao;
 	scanf("%d", &opcao);
@@ -321,13 +349,16 @@ int menu_aluno(){
 		case 4:
 			excluir_aluno();
 			break;	
-		case 5:	
+		case 5:
+			modificar_aluno();
+			break;
+		case 6:	
 			consultar_alunos();
 			break;
-		case 6:
+		case 7:
 			imprimir_alunos();
 			break;
-		case 7:
+		case 8:
 			break;
 		default:
 			printf("Selecione uma opcao disponivel \n");
@@ -336,5 +367,4 @@ int menu_aluno(){
 			menu_aluno();
 			break;
 	}
-
 }
