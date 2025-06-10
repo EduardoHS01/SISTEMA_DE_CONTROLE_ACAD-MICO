@@ -237,6 +237,82 @@ void ListarPessoaDisciplinaAlunos()
 }
 
 
+void escrever_pessoa_displina_arquivo()
+{	
+    FILE *file = fopen("PESSOA_DISCIPLINA.csv", "w");
+    if (file == NULL) {
+        perror("Error opening file");
+    }
+    fprintf(file, "Codigo,Codigo_pessoa,Codigo_curso_disciplina\n");
+	
+    FILE *arquivo = fopen("PESSOA_DISCIPLINA.csv", "a");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+    }
+    fclose(file);
+	while (topoPessoaDisciplina!=NULL)
+	{
+		FILE *arquivo = fopen("PESSOA_DISCIPLINA.csv", "a");
+	
+	    if (arquivo == NULL) {
+	        printf("Erro ao abrir o arquivo.\n");
+	    }
+		fprintf(arquivo,"%d,%d,%d\n",topoPessoaDisciplina->cod_curso_disciplina,topoPessoaDisciplina->cod_pessoa,topoPessoaDisciplina->cod_pessoa_disciplina);	
+
+		topoPessoaDisciplina=topoPessoaDisciplina->proximo;
+		fclose(arquivo);	
+	}		
+};
+
+
+void ler_pessoa_disciplina() {
+    FILE *file = fopen("PESSOA_DISCIPLINA.csv", "r");
+    char linha[256];
+    if (fgets(linha, sizeof(linha), file) == NULL) {
+        fclose(file);
+        return;
+    } 
+    while (fgets(linha, sizeof(linha), file) != NULL) {
+        linha[strcspn(linha, "\r\n")] = '\0';
+        int codigo, cod_pessoa,cod_pessoa_disciplina;
+        
+        int result = sscanf(linha, "%d,%d,%d",
+                            &codigo, &cod_pessoa, &cod_pessoa_disciplina);
+        
+        if (result == 3) {
+      	criar_pessoa_displina_arquivo(codigo,cod_pessoa,cod_pessoa_disciplina);
+        }
+    }
+    fclose(file);
+};
+
+void criar_pessoa_displina_arquivo(int codigo, int cod_pessoa,int cod_pessoa_disciplina)
+{	
+	ultimoCodigoPessoaDisciplina++;
+	
+	auxPessoaDisciplina = (struct PESSOA_DISCIPLINA*)malloc(sizeof(struct PESSOA_DISCIPLINA));
+	auxPessoaDisciplina->cod_pessoa_disciplina = codigo;
+	auxPessoaDisciplina->cod_pessoa = cod_pessoa;
+	auxPessoaDisciplina->cod_pessoa_disciplina = cod_pessoa_disciplina;
+	
+	
+	limparBuffer();
+	
+	if(topoPessoaDisciplina == NULL)
+	{
+		topoPessoaDisciplina = auxPessoaDisciplina;
+	}
+	else
+	{
+		fimPessoaDisciplina->proximo = auxPessoaDisciplina;
+	}
+	auxPessoaDisciplina->proximo = NULL;
+	fimPessoaDisciplina = auxPessoaDisciplina;
+};
+
+
+
 
 
 

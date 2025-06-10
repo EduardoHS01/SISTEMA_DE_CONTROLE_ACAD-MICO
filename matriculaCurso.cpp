@@ -139,3 +139,85 @@ void ListarMatriculaCursos()
 	}
 	getchar();
 }
+
+void escrever_matricula_curso()
+{	
+    FILE *file = fopen("MATRICULA_CURSO.csv", "w");
+    if (file == NULL) {
+        perror("Erro ao abrir arquivo");
+        return;
+    }
+    // Cabe?alho do CSV
+    fprintf(file, "Cod_matricula_curso,Cod_pessoa,Cod_curso\n");
+    
+    struct MATRICULA_CURSO *atual = topoMatriculaCurso;
+    while (atual != NULL)
+    {
+        // Escreve todos os campos da struct em uma linha
+        fprintf(file, "%d,%d,%d\n",
+                atual->cod_matricula_curso,
+                atual->cod_pessoa,
+                atual->cod_curso);
+
+        atual = atual->proximo;
+    }
+    fclose(file);
+}
+
+void ler_matricula_curso() {
+    FILE *file = fopen("MATRICULA_CURSO.csv", "r");
+    if (file == NULL) {
+        perror("Erro ao abrir arquivo");
+        return;
+    }
+    
+    char linha[256];
+    // Ignora cabe?alho
+    if (fgets(linha, sizeof(linha), file) == NULL) {
+        fclose(file);
+        return;
+    } 
+    
+    while (fgets(linha, sizeof(linha), file) != NULL) {
+        linha[strcspn(linha, "\r\n")] = '\0';
+        int cod_matricula_curso, cod_pessoa, cod_curso;
+        
+        // L? todos os 3 campos inteiros
+        int result = sscanf(linha, "%d,%d,%d",
+                            &cod_matricula_curso,
+                            &cod_pessoa,
+                            &cod_curso);
+        
+        if (result == 3) {
+            criar_matricula_curso_arquivo(cod_matricula_curso, cod_pessoa, cod_curso);
+        }
+        else {
+            printf("Erro ao ler linha: %s\n", linha);
+        }
+    }
+    fclose(file);
+}
+
+void criar_matricula_curso_arquivo(int cod_matricula_curso, int cod_pessoa, int cod_curso)
+{	
+    auxMatriculaCurso = (struct MATRICULA_CURSO*)malloc(sizeof(struct MATRICULA_CURSO));
+    
+    // Preenche todos os campos da struct
+    auxMatriculaCurso->cod_matricula_curso = cod_matricula_curso;
+    auxMatriculaCurso->cod_pessoa = cod_pessoa;
+    auxMatriculaCurso->cod_curso = cod_curso;
+    
+    // Configura ponteiro pr?ximo
+    auxMatriculaCurso->proximo = NULL;
+    
+    // Insere na lista ligada
+    if(topoMatriculaCurso == NULL) {
+        topoMatriculaCurso = auxMatriculaCurso;
+        fimMatriculaCurso = auxMatriculaCurso;
+    }
+    else {
+        fimMatriculaCurso->proximo = auxMatriculaCurso;
+        fimMatriculaCurso = auxMatriculaCurso;
+    }
+};
+

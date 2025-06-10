@@ -214,6 +214,87 @@ void ListarTodasPessoas()
 }
 
 
+void escrever_pessoa()
+{	
+    FILE *file = fopen("PESSOA.csv", "w");
+    if (file == NULL) {
+        perror("Error opening file");
+    }
+    fprintf(file, "Codigo,Nome,CPF,Data,Ativo,Professor\n");
+	
+    FILE *arquivo = fopen("PESSOA.csv", "a");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+    }
+    fclose(file);
+	while (topoPessoa!=NULL)
+	{
+		FILE *arquivo = fopen("PESSOA.csv", "a");
+	
+	    if (arquivo == NULL) {
+	        printf("Erro ao abrir o arquivo.\n");
+	    }
+		fprintf(arquivo,"%d,%s,%s,%s,%d,%d\n",topoPessoa->cod_pessoa,topoPessoa->nome_pessoa,topoPessoa->cpf, topoPessoa->data_nascimento,topoPessoa->ativo,topoPessoa->professor);	
+
+		topoPessoa=topoPessoa->proximo;
+		fclose(arquivo);	
+	}		
+};
+
+
+void ler_pessoa() {
+    FILE *file = fopen("PESSOA.csv", "r");
+    char linha[256];
+    int contador = 0;
+    int erros = 0;
+    if (fgets(linha, sizeof(linha), file) == NULL) {
+        fclose(file);
+        return;
+    } 
+    while (fgets(linha, sizeof(linha), file) != NULL) {
+        linha[strcspn(linha, "\r\n")] = '\0';
+        int codigo, ativo, professor;
+        char nome[100], cpf[15], data[11];
+        
+        int result = sscanf(linha, "%d,%99[^,],%14[^,],%10[^,],%d,%d",
+                            &codigo, nome, cpf, data, &ativo, &professor);
+        
+        if (result == 6) {
+      	criar_pessoa_arquivo(codigo,nome,cpf,data,ativo,professor);
+        }
+    }
+    fclose(file);
+};
+
+void criar_pessoa_arquivo(int codigo,char nome[],char cpf[],char data[],bool ativo,bool professor)
+{	
+	struct PESSOA *p = NULL;	
+ 
+	p = (struct PESSOA*)malloc(sizeof(struct PESSOA));	
+	p->proximo = NULL;
+
+	p->cod_pessoa = codigo;
+	strcpy(p->nome_pessoa,nome);
+	strcpy(p->cpf,cpf);	
+	strcpy(p->data_nascimento,data);
+	p->ativo = ativo;
+	p->professor = professor;	
+	
+
+	if(topoPessoa == NULL)
+	{
+		topoPessoa = p;
+	}
+	else
+	{
+		fimPessoa ->proximo = p;
+	}
+	fimPessoa = p;
+	auxPessoa = topoPessoa;
+};
+
+
 
 
 

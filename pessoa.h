@@ -25,5 +25,8 @@ bool validar_cpf_formatado(const char *cpf);
 bool validar_data_formatada(const char *data);
 void ListarPessoas(bool tipo);
 void ListarTodasPessoas();
+void criar_pessoa_arquivo(int codigo, char *nome, char *cpf, char *data, bool ativo, bool professor);
+void escrever_pessoa();
+void ler_pessoa();
 
 #endif

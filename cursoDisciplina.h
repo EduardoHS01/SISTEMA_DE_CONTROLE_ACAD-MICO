@@ -19,4 +19,7 @@ struct CURSO_DISCIPLINA
 void CadastrarCursoDisciplina();
 void MenuCursoDisciplina();
 void ListarCursoDisciplinas();
+void criar_curso_disciplina_arquivo(int cod_curso_disciplina, int cod_curso, int cod_disciplina, int periodo);
+void ler_curso_disciplina();
+void escrever_curso_disciplina();
 #endif

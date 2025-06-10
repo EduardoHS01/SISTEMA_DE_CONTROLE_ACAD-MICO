@@ -22,5 +22,8 @@ void MenuDesempenhoAlunoDisciplina();
 void CadastrarDesempenhoAlunoDisciplina();
 void ListarDesempenhosAlunoDisciplina();
 void CalcularAprovacao(DESEMPENHO_ALUNO_DISCIPLINA* desempenho);
+void criar_desempenho_arquivo(int cod_desempenho, int cod_pessoa_disciplina, float nota1, float nota2, float nota3, float nota4, int faltas, bool aprovacao);
+void ler_desempenho();
+void escrever_desempenho();
 
 #endif

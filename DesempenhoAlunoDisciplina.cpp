@@ -167,3 +167,103 @@ void ListarDesempenhosAlunoDisciplina() {
     }
     getchar();
 }
+
+void escrever_desempenho()
+{	
+    FILE *file = fopen("DESEMPENHO.csv", "w");
+    if (file == NULL) {
+        perror("Erro ao abrir arquivo");
+        return;
+    }
+    // Escreve cabe?alho do CSV
+    fprintf(file, "Cod_desempenho,Cod_pessoa_disciplina,Nota1,Nota2,Nota3,Nota4,Faltas,Aprovacao\n");
+    fclose(file);
+	
+    struct DESEMPENHO_ALUNO_DISCIPLINA *atual = topoDesempenhoAlunoDisciplina;
+    while (atual != NULL)
+    {
+        FILE *arquivo = fopen("DESEMPENHO.csv", "a");
+        if (arquivo == NULL) {
+            printf("Erro ao abrir o arquivo.\n");
+            return;
+    	}
+        // Escreve os dados do desempenho
+        fprintf(arquivo, "%d,%d,%.2f,%.2f,%.2f,%.2f,%d,%d\n",
+                atual->cod_desempenho,
+                atual->cod_pessoa_disciplina,
+                atual->nota1,
+                atual->nota2,
+                atual->nota3,
+                atual->nota4,
+                atual->faltas,
+                atual->aprovacao ? 1 : 0); // Converte bool para int (0 ou 1)
+
+        atual = atual->proximo;
+        fclose(arquivo);	
+    }		
+};
+
+void ler_desempenho() {
+    FILE *file = fopen("DESEMPENHO.csv", "r");
+    if (file == NULL) {
+        perror("Erro ao abrir arquivo");
+        return;
+    }
+    
+    char linha[256];
+    // Ignora cabe?alho
+    if (fgets(linha, sizeof(linha), file) == NULL) {
+        fclose(file);
+        return;
+    } 
+    
+    while (fgets(linha, sizeof(linha), file) != NULL) {
+        linha[strcspn(linha, "\r\n")] = '\0';
+        int cod_desempenho, cod_pessoa_disciplina, faltas, aprovacaoInt;
+        float nota1, nota2, nota3, nota4;
+        
+        int result = sscanf(linha, "%d,%d,%f,%f,%f,%f,%d,%d",
+                            &cod_desempenho, 
+                            &cod_pessoa_disciplina,
+                            &nota1,
+                            &nota2,
+                            &nota3,
+                            &nota4,
+                            &faltas,
+                            &aprovacaoInt);
+        
+        if (result == 8) {
+            // Converte int para bool
+            bool aprovacao = (aprovacaoInt == 1);
+            criar_desempenho_arquivo(cod_desempenho, cod_pessoa_disciplina, nota1, nota2, nota3, nota4, faltas, aprovacao);
+        }
+        else {
+            printf("Erro ao ler linha: %s\n", linha);
+        }
+    }
+    fclose(file);
+};
+
+void criar_desempenho_arquivo(int cod_desempenho, int cod_pessoa_disciplina, float nota1, float nota2, float nota3, float nota4, int faltas, bool aprovacao)
+{	
+    auxDesempenhoAlunoDisciplina = (struct DESEMPENHO_ALUNO_DISCIPLINA*)malloc(sizeof(struct DESEMPENHO_ALUNO_DISCIPLINA));
+    
+    auxDesempenhoAlunoDisciplina->cod_desempenho = cod_desempenho;
+    auxDesempenhoAlunoDisciplina->cod_pessoa_disciplina = cod_pessoa_disciplina;
+    auxDesempenhoAlunoDisciplina->nota1 = nota1;
+    auxDesempenhoAlunoDisciplina->nota2 = nota2;
+    auxDesempenhoAlunoDisciplina->nota3 = nota3;
+    auxDesempenhoAlunoDisciplina->nota4 = nota4;
+    auxDesempenhoAlunoDisciplina->faltas = faltas;
+    auxDesempenhoAlunoDisciplina->aprovacao = aprovacao;
+    
+    if(topoDesempenhoAlunoDisciplina == NULL) {
+        topoDesempenhoAlunoDisciplina = auxDesempenhoAlunoDisciplina;
+    }
+    else {
+        fimDesempenhoAlunoDisciplina->proximo = auxDesempenhoAlunoDisciplina;
+    }
+    auxDesempenhoAlunoDisciplina->proximo = NULL;
+    fimDesempenhoAlunoDisciplina = auxDesempenhoAlunoDisciplina;
+};
+

@@ -18,6 +18,9 @@ struct DISCIPLINA
 void CadastrarDisciplina();
 void MenuDisciplina();
 void ListarDisciplinas();
+void criar_displina_arquivo(int codigo, char nome[],bool ativo);
+void ler_disciplina();
+void escrever_disciplina();
 #endif
 
 

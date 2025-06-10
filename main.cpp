@@ -35,8 +35,15 @@ int Menu()
 	
 	return escolhaMenu;
 }
-
 int main(int argc, char *argv[]) {
+	ler_pessoa();
+	ler_disciplina();
+	ler_pessoa_disciplina();
+	ler_desempenho();
+	ler_curso();
+	ler_matricula_curso();
+	ler_curso_disciplina();
+	
 	int escolhaMenu;
 	
 	while(escolhaMenu != 9)
@@ -69,20 +76,29 @@ int main(int argc, char *argv[]) {
 				MenuDesempenhoAlunoDisciplina();
 				break;
 			case 9:
+				
 				printf("Encerrando o programa...\n");
 			    sleep(2);
+			    escrever_pessoa();
+			    escrever_disciplina();
+			    escrever_pessoa_displina_arquivo();
+			    escrever_desempenho();
+			    escrever_curso();
+			    escrever_matricula_curso();
+			    escrever_curso_disciplina();
 			    exit(0);
 			    break;
 			default:
 				printf("Selecione uma opcao disponivel \n");
 				fflush(stdin);
-				getchar(); 
+				getch(); 
 				break;
 		}
 		system("cls");
 	}
 	return 0;
 }
+
 
 
 

@@ -19,4 +19,7 @@ void CadastrarPessoaDisciplina();
 void MenuPessoaDisciplina();
 void ListarPessoaDisciplinas();
 void ListarPessoaDisciplinaAlunos();
+void escrever_pessoa_displina_arquivo();
+void ler_pessoa_disciplina();
+void criar_pessoa_displina_arquivo(int codigo, int cod_pessoa,int cod_pessoa_disciplina);
 #endif

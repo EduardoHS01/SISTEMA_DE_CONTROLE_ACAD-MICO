@@ -89,6 +89,81 @@ void CadastrarCurso()
 	fimCurso = auxCurso;
 };
 
+void escrever_curso()
+{
+    FILE *file = fopen("CURSO.csv", "w");
+    if (file == NULL) {
+        perror("Erro ao abrir arquivo");
+        return;
+    }
+    fprintf(file, "Codigo,Nome,Periodos\n");
+    
+    struct CURSO *atual = topoCurso;
+    while (atual != NULL)
+    {
+        fprintf(file, "%d,%s,%d\n",
+                atual->cod_curso,
+                atual->nome_curso,
+                atual->periodos);
+
+        atual = atual->proximo;
+    }
+    fclose(file);
+}
+
+void ler_curso() {
+    FILE *file = fopen("CURSO.csv", "r");
+    if (file == NULL) {
+        perror("Erro ao abrir arquivo");
+        return;
+    }
+    
+    char linha[256];
+    // Ignora cabe?alho
+    if (fgets(linha, sizeof(linha), file) == NULL) {
+        fclose(file);
+        return;
+    } 
+    
+    while (fgets(linha, sizeof(linha), file) != NULL) {
+        linha[strcspn(linha, "\r\n")] = '\0';
+        int codigo, periodos;
+        char nome[30];
+        
+        int result = sscanf(linha, "%d,%30[^,],%d",
+                            &codigo, nome, &periodos);
+        
+        if (result == 3) {
+            criar_curso_arquivo(codigo, nome, periodos);
+        }
+        else {
+            printf("Erro ao ler linha: %s\n", linha);
+        }
+    }
+    fclose(file);
+}
+
+void criar_curso_arquivo(int codigo, char nome[], int periodos)
+{	
+    auxCurso = (struct CURSO*)malloc(sizeof(struct CURSO));
+    
+    auxCurso->cod_curso = codigo;
+    auxCurso->periodos = periodos;
+    strncpy(auxCurso->nome_curso, nome, sizeof(auxCurso->nome_curso) - 1);
+    auxCurso->nome_curso[sizeof(auxCurso->nome_curso) - 1] = '\0'; // Garante termina??o
+    
+    auxCurso->proximo = NULL;
+    
+    if(topoCurso == NULL) {
+        topoCurso = auxCurso;
+        fimCurso = auxCurso;
+    }
+    else {
+        fimCurso->proximo = auxCurso;
+        fimCurso = auxCurso;
+    }
+};
+
 
 
 

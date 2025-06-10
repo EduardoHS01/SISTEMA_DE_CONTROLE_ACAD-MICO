@@ -90,6 +90,79 @@ void CadastrarDisciplina()
 	fimDisciplina = auxDisciplina;
 };
 
+void escrever_disciplina()
+{	
+    FILE *file = fopen("DISCIPLINA.csv", "w");
+    if (file == NULL) {
+        perror("Error opening file");
+    }
+    fprintf(file, "Codigo,NomeData,AtivoProfessor\n");
+	
+    FILE *arquivo = fopen("DISCIPILINA.csv", "a");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+    }
+    fclose(file);
+	while (topoDisciplina!=NULL)
+	{
+		FILE *arquivo = fopen("DISCIPLINA.csv", "a");
+	
+	    if (arquivo == NULL) {
+	        printf("Erro ao abrir o arquivo.\n");
+	    }
+		fprintf(arquivo,"%d,%s,%d\n",topoDisciplina->cod_disciplina,topoDisciplina->nome_disciplina,topoDisciplina->ativo);	
+
+		topoDisciplina=topoDisciplina->proximo;
+		fclose(arquivo);	
+	}		
+};
+
+
+void ler_disciplina() {
+    FILE *file = fopen("DISCIPLINA.csv", "r");
+    char linha[256];
+    int contador = 0;
+    int erros = 0;
+    if (fgets(linha, sizeof(linha), file) == NULL) {
+        fclose(file);
+        return;
+    } 
+    while (fgets(linha, sizeof(linha), file) != NULL) {
+        linha[strcspn(linha, "\r\n")] = '\0';
+        int codigo, ativo;
+        char nome[50];
+        
+        int result = sscanf(linha, "%d,%50[^,],%d",
+                            &codigo, nome, &ativo);
+        
+        if (result == 3) {
+      	criar_displina_arquivo(codigo,nome,ativo);
+        }
+    }
+    fclose(file);
+};
+void criar_displina_arquivo(int codigo, char nome[],bool ativo)
+{	
+	ultimoCodigoDisciplina++;
+	
+	auxDisciplina = (struct DISCIPLINA*)malloc(sizeof(struct DISCIPLINA));
+	auxDisciplina->cod_disciplina = codigo;
+	auxDisciplina->ativo = ativo;
+	
+	strcpy(auxDisciplina->nome_disciplina, nome);
+	
+	if(topoDisciplina == NULL)
+	{
+		topoDisciplina = auxDisciplina;
+	}
+	else
+	{
+		fimDisciplina->proximo = auxDisciplina;
+	}
+	auxDisciplina->proximo = NULL;
+	fimDisciplina = auxDisciplina;
+};
 
 
 

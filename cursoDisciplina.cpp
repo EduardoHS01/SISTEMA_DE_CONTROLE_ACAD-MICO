@@ -131,6 +131,90 @@ void ListarCursoDisciplinas()
 		auxCursoDisciplina = auxCursoDisciplina->proximo;
 	}
 }
+void escrever_curso_disciplina()
+{	
+    FILE *file = fopen("CURSO_DISCIPLINA.csv", "w");
+    if (file == NULL) {
+        perror("Erro ao abrir arquivo");
+        return;
+    }
+    // Cabe?alho do CSV
+    fprintf(file, "Cod_curso_disciplina,Cod_curso,Cod_disciplina,Periodo\n");
+    
+    struct CURSO_DISCIPLINA *atual = topoCursoDisciplina;
+    while (atual != NULL)
+    {
+        // Escreve todos os campos da struct em uma linha
+        fprintf(file, "%d,%d,%d,%d\n",
+                atual->cod_curso_disciplina,
+                atual->cod_curso,
+                atual->cod_disciplina,
+                atual->periodo);
+
+        atual = atual->proximo;
+    }
+    fclose(file);
+}
+
+void ler_curso_disciplina() {
+    FILE *file = fopen("CURSO_DISCIPLINA.csv", "r");
+    if (file == NULL) {
+        perror("Erro ao abrir arquivo");
+        return;
+    }
+    
+    char linha[256];
+    // Ignora cabe?alho
+    if (fgets(linha, sizeof(linha), file) == NULL) {
+        fclose(file);
+        return;
+    } 
+    
+    while (fgets(linha, sizeof(linha), file) != NULL) {
+        linha[strcspn(linha, "\r\n")] = '\0';
+        int cod_curso_disciplina, cod_curso, cod_disciplina, periodo;
+        
+        // L? todos os 4 campos inteiros
+        int result = sscanf(linha, "%d,%d,%d,%d",
+                            &cod_curso_disciplina,
+                            &cod_curso,
+                            &cod_disciplina,
+                            &periodo);
+        
+        if (result == 4) {
+            criar_curso_disciplina_arquivo(cod_curso_disciplina, cod_curso, cod_disciplina, periodo);
+        }
+        else {
+            printf("Erro ao ler linha: %s\n", linha);
+        }
+    }
+    fclose(file);
+}
+
+void criar_curso_disciplina_arquivo(int cod_curso_disciplina, int cod_curso, int cod_disciplina, int periodo)
+{	
+    auxCursoDisciplina = (struct CURSO_DISCIPLINA*)malloc(sizeof(struct CURSO_DISCIPLINA));
+    
+    // Preenche todos os campos da struct
+    auxCursoDisciplina->cod_curso_disciplina = cod_curso_disciplina;
+    auxCursoDisciplina->cod_curso = cod_curso;
+    auxCursoDisciplina->cod_disciplina = cod_disciplina;
+    auxCursoDisciplina->periodo = periodo;
+    
+    // Configura ponteiro pr?ximo
+    auxCursoDisciplina->proximo = NULL;
+    
+    // Insere na lista ligada
+    if(topoCursoDisciplina == NULL) {
+        topoCursoDisciplina = auxCursoDisciplina;
+        fimCursoDisciplina = auxCursoDisciplina;
+    }
+    else {
+        fimCursoDisciplina->proximo = auxCursoDisciplina;
+        fimCursoDisciplina = auxCursoDisciplina;
+    }
+};
+
 
 
 

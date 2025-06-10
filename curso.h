@@ -18,6 +18,9 @@ struct CURSO
 void CadastrarCurso();
 void MenuCurso();
 void ListarCursos();
+void escrever_curso();
+void ler_curso();
+void criar_curso_arquivo(int codigo, char nome[], int periodos);
 #endif
 
 
