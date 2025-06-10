@@ -51,9 +51,9 @@ void MenuPessoa(bool tipo)  //1 = professor, 0 = aluno
 	if(tipo) //se for professor
 	{
 		system("cls");
-		printf("1 - Adicionar professor OK\n");
-		printf("2 - Listar professores OK\n");
-		printf("3 - Gerenciar professor NOK\n");
+		printf("1 - Adicionar professor\n");
+		printf("2 - Listar professores\n");
+		printf("3 - Gerenciar professor\n");
 		printf("4 - Voltar \n");
 		
 		scanf("%d", &escolhaMenu);
@@ -66,6 +66,10 @@ void MenuPessoa(bool tipo)  //1 = professor, 0 = aluno
 				break;
 			case 2:
 				ListarPessoas(true);
+				getchar();
+				break;
+			case 3:
+				GerenciarPessoa(true);
 				break;
 			case 4:
 				return;
@@ -74,9 +78,9 @@ void MenuPessoa(bool tipo)  //1 = professor, 0 = aluno
 	}else
 	{
 		system("cls");
-		printf("1 - Adicionar aluno OK\n");
-		printf("2 - Listar alunos OK\n");
-		printf("3 - Gerenciar aluno NOK\n");
+		printf("1 - Adicionar aluno\n");
+		printf("2 - Listar alunos\n");
+		printf("3 - Gerenciar aluno\n");
 		printf("4 - Voltar \n");
 		
 		scanf("%d", &escolhaMenu);
@@ -90,6 +94,9 @@ void MenuPessoa(bool tipo)  //1 = professor, 0 = aluno
 			case 2:
 				ListarPessoas(false);
 				getchar();
+				break;
+			case 3:
+				GerenciarPessoa(false);
 				break;
 			case 4:
 				return;
@@ -269,6 +276,7 @@ void ler_pessoa() {
 
 void criar_pessoa_arquivo(int codigo,char nome[],char cpf[],char data[],bool ativo,bool professor)
 {	
+	ultimoCodigoPessoa++;
 	struct PESSOA *p = NULL;	
  
 	p = (struct PESSOA*)malloc(sizeof(struct PESSOA));	
@@ -293,6 +301,159 @@ void criar_pessoa_arquivo(int codigo,char nome[],char cpf[],char data[],bool ati
 	fimPessoa = p;
 	auxPessoa = topoPessoa;
 };
+
+void GerenciarPessoa(bool tipo){
+	system("cls");
+	
+	if (topoPessoa == NULL){
+		return;
+	}
+	
+	if (tipo){
+		ListarPessoas(tipo);
+		printf("\nInsira o nome do professor a ser gerenciado\n");
+	} else {
+		ListarPessoas(tipo);
+		printf("\nInsira o nome do aluno a ser gerenciado\n");
+	}
+	
+	int cdPessoa = 0;
+	scanf("%d", &cdPessoa);
+	
+	bool localizarPessoa = localizaPessoa(cdPessoa, tipo);
+	
+	if (!localizarPessoa){
+		printf("%s nao localizado\n", tipo ? "Professor" : "Aluno");
+		getchar();
+		return;
+	}
+	
+	system("cls");
+	
+	int escolha = 0;
+	
+	if (tipo){
+		printf("1-Inativar/Ativar professor\n2-Editar nome do professor\n3-Editar CPF do professor\n4-Editar data de nascimento do professor\n5-Voltar\n");
+	} else {
+		int escolha = 0;
+		printf("1-Inativar/Ativar aluno\n2-Editar nome do aluno\n3-Editar CPF do aluno\n4-Editar data de nascimento do aluno\n5-Voltar\n");
+	}
+	
+	scanf("%d", &escolha);
+	limparBuffer();
+	
+	switch (escolha){
+		case 1:
+			auxPessoa = topoPessoa;
+			while (auxPessoa != NULL){
+				if (auxPessoa->cod_pessoa == cdPessoa){
+					if (auxPessoa->ativo){
+						auxPessoa->ativo = false;
+						printf("%d - %s inativado com sucesso!", auxPessoa->cod_pessoa, auxPessoa->nome_pessoa);
+					} else {
+						auxPessoa->ativo = true;
+						printf("%d - %s ativado com sucesso!", auxPessoa->cod_pessoa, auxPessoa->nome_pessoa);
+					}
+				}
+				auxPessoa = auxPessoa->proximo;
+			}
+			getchar();
+			break;	
+		case 2:
+			char novoNome[50];
+			printf("Insira o novo nome\n");
+			scanf("%50[^\n]", novoNome);
+			limparBuffer();
+			auxPessoa = topoPessoa;
+			while (auxPessoa != NULL){
+				if (auxPessoa->cod_pessoa == cdPessoa){
+					char nomeAntigo[50];
+					strcpy(nomeAntigo, auxPessoa->nome_pessoa);
+					strcpy(auxPessoa->nome_pessoa, novoNome);
+					limparBuffer();
+					printf("Nome antigo: %s\nNovo nome: %s\nAlterado com sucesso", nomeAntigo, auxPessoa->nome_pessoa);
+				}
+				auxPessoa = auxPessoa->proximo;
+			}
+			getchar();
+			break;
+		case 3:
+		    char novoCpf[14];
+		    char cpfAntigo[14];
+		    limparBuffer();
+		    auxPessoa = topoPessoa;
+		    while (auxPessoa != NULL){
+		        if (auxPessoa->cod_pessoa == cdPessoa){
+		            do {
+		                fflush(stdin);
+		                printf("Insira o novo CPF (formato xxx.xxx.xxx-xx)\n");
+		                scanf("%s", novoCpf);
+		                limparBuffer();
+		                strcpy(cpfAntigo, auxPessoa->cpf);
+		                if (!validar_cpf_formatado(novoCpf)) {
+		                    printf("CPF invalido! Tente novamente no formato xxx.xxx.xxx-xx.\n");
+		                }
+		            } while (!validar_cpf_formatado(novoCpf));
+		            strcpy(auxPessoa->cpf, novoCpf);
+		            printf("CPF antigo: %s\nNovo CPF: %s\nAlterado com sucesso", cpfAntigo, auxPessoa->cpf);
+		            break;
+		        }
+		        auxPessoa = auxPessoa->proximo;
+		    }
+		    getchar();
+		    break;
+		case 4:
+			char dataAntiga[14];
+		    char novaData[14];
+		    limparBuffer();
+		    auxPessoa = topoPessoa;
+		    while (auxPessoa != NULL){
+		        if (auxPessoa->cod_pessoa == cdPessoa){
+		            do {
+		                fflush(stdin);
+		                printf("Insira a nova data (formato dd/mm/aaaa)\n");
+		                scanf("%s", novaData);
+		                limparBuffer();
+		                strcpy(dataAntiga, auxPessoa->data_nascimento);
+		                if (!validar_data_formatada(novaData)) {
+		                    printf("Data invalida! Tente novamente no formato dd/mm/aaaa.\n");
+		                }
+		            } while (!validar_data_formatada(novaData));
+		            strcpy(auxPessoa->data_nascimento, novaData);
+		            printf("Data de nascimento antiga: %s\nNova data de nascimento: %s\nAlterada com sucesso", dataAntiga, auxPessoa->data_nascimento);
+		            break;
+		        }
+		        auxPessoa = auxPessoa->proximo;
+		    }
+		    getchar();
+		    break;
+		case 5:
+			break;
+		default:
+			printf("Selecione uma opcao disponivel...");
+			break;
+		}
+}
+
+bool localizaPessoa(int cdPessoa, bool tipo){
+	bool encontrouPessoa = false;
+	auxPessoa = topoPessoa;
+	while (auxPessoa != NULL){
+		if (auxPessoa->cod_pessoa == cdPessoa){
+			if (auxPessoa->professor == tipo){
+				encontrouPessoa = true;
+			}
+				
+		}
+		auxPessoa = auxPessoa->proximo;
+	}
+	
+	if (encontrouPessoa){
+		return true;
+	} else {
+		return false;
+	}
+}
 
 
 

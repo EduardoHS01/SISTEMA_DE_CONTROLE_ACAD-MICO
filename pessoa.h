@@ -28,5 +28,7 @@ void ListarTodasPessoas();
 void criar_pessoa_arquivo(int codigo, char *nome, char *cpf, char *data, bool ativo, bool professor);
 void escrever_pessoa();
 void ler_pessoa();
+void GerenciarPessoa(bool tipo);
+bool localizaPessoa(int cdPessoa, bool tipo);
 
 #endif
