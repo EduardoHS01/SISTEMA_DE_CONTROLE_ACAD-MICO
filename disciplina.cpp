@@ -19,9 +19,9 @@ void MenuDisciplina()
 	int escolhaMenu;
 	
 	system("cls");
-	printf("1 - Criar disciplina OK\n");
-	printf("2 - Listar disciplinas OK\n");
-	printf("3 - Gerenciar disciplina NOK\n");
+	printf("1 - Criar disciplina\n");
+	printf("2 - Listar disciplinas\n");
+	printf("3 - Gerenciar disciplina\n");
 	printf("4 - Voltar \n");
 	
 	scanf("%d", &escolhaMenu);
@@ -35,6 +35,9 @@ void MenuDisciplina()
 		case 2:
 			ListarDisciplinas();
 			getchar();
+			break;
+		case 3:
+			GerenciarDisciplina();
 			break;
 		case 4:
 			return;
@@ -54,13 +57,10 @@ void ListarDisciplinas()
 	
 	while(auxDisciplina != NULL)
 	{
-		if(auxDisciplina->ativo == true)
-		{
-			printf("Codigo: %d, Nome: %s, Ativo: %s\n",
-			auxDisciplina->cod_disciplina,
-			auxDisciplina->nome_disciplina,
-			auxDisciplina->ativo ? "Sim" : "Nao");
-		}
+		printf("Codigo: %d, Nome: %s, Ativo: %s\n",
+		auxDisciplina->cod_disciplina,
+		auxDisciplina->nome_disciplina,
+		auxDisciplina->ativo ? "Sim" : "Nao");
 		auxDisciplina = auxDisciplina->proximo;
 	}
 };
@@ -74,8 +74,11 @@ void CadastrarDisciplina()
 	auxDisciplina->ativo = true;
 	
 	system("cls");
+	char nomeDisciplina[50];
 	printf("Qual o nome da disciplina?\n");
-	scanf(" %50[^\n]", auxDisciplina->nome_disciplina);
+	scanf(" %50[^\n]", nomeDisciplina);
+	converteMaiusculas(nomeDisciplina);
+	strcpy(auxDisciplina->nome_disciplina, nomeDisciplina);
 	limparBuffer();
 	
 	if(topoDisciplina == NULL)
@@ -90,15 +93,101 @@ void CadastrarDisciplina()
 	fimDisciplina = auxDisciplina;
 };
 
+void GerenciarDisciplina(){
+	system("cls");
+	limparBuffer();
+	int cdDisciplina = 0;
+	
+	ListarDisciplinas();
+	
+	if (topoDisciplina == NULL){
+		getchar();
+		return;
+	}
+	
+	printf("\nInsira o codigo da disciplina a ser gerenciada\n");
+	scanf("%d", &cdDisciplina);
+	
+	int encontrouDisciplina = localizaDisciplina(cdDisciplina);
+	
+	if (!encontrouDisciplina){
+		printf("Disciplina nao localizada...");
+		getchar();
+		return;
+	}
+	
+	system("cls");
+	
+	int escolha = 0;
+	printf("1-Inativar/Ativar disciplina\n2-Editar nome da disciplina\n3-Voltar\n");
+	scanf("%d", &escolha);
+	limparBuffer();
+	
+	if (escolha == 1){
+		auxDisciplina = topoDisciplina;
+		while (auxDisciplina != NULL){
+			if (auxDisciplina->cod_disciplina == cdDisciplina){
+				if (auxDisciplina->ativo){
+					auxDisciplina->ativo = false;
+					printf("%s inativada com sucesso", auxDisciplina->nome_disciplina);
+				} else {
+					auxDisciplina->ativo = true;
+					printf("%s ativada com sucesso", auxDisciplina->nome_disciplina);
+				}
+			}
+			auxDisciplina = auxDisciplina->proximo;
+		}
+		getchar();
+	} else if (escolha == 2) {
+		limparBuffer();
+		auxDisciplina = topoDisciplina;
+		char novoNome[50];
+		char nomeAntigo[50];
+		while (auxDisciplina != NULL){
+			if (auxDisciplina->cod_disciplina == cdDisciplina){
+				printf("Insira o novo nome:\n");
+				scanf("%s", novoNome);
+				converteMaiusculas(novoNome);
+				strcpy(nomeAntigo, auxDisciplina->nome_disciplina);
+				strcpy(auxDisciplina->nome_disciplina, novoNome);
+				
+				printf("Nome antigo: %s\nNovo nome: %s\nAlterado com sucesso", nomeAntigo, auxDisciplina->nome_disciplina);
+			}
+			auxDisciplina = auxDisciplina->proximo;
+		}
+		limparBuffer();
+		getchar();
+	} else {
+		return;
+	}
+}
+
+bool localizaDisciplina(int cdDisciplina){
+	bool encontrouDisciplina = false;
+	auxDisciplina = topoDisciplina;
+	while (auxDisciplina != NULL){
+		if (auxDisciplina->cod_disciplina == cdDisciplina){
+			encontrouDisciplina = true;
+		}
+		auxDisciplina = auxDisciplina->proximo;
+	}
+	
+	if (encontrouDisciplina){
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void escrever_disciplina()
 {	
     FILE *file = fopen("DISCIPLINA.csv", "w");
     if (file == NULL) {
         perror("Error opening file");
     }
-    fprintf(file, "Codigo,NomeData,AtivoProfessor\n");
+    fprintf(file, "Codigo,Nome,Ativo\n");
 	
-    FILE *arquivo = fopen("DISCIPILINA.csv", "a");
+    FILE *arquivo = fopen("DISCIPLINA.csv", "a");
 
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo.\n");

@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <conio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <iostream>
+#include <ctype.h>
 
 #include "pessoa.h"
 #include "funcoesauxiliares.h"
@@ -13,6 +15,45 @@ struct PESSOA *auxPessoa = NULL;
 struct PESSOA *fimPessoa = NULL;
 
 int ultimoCodigoPessoa = 0;
+
+void buscarPessoa(bool tipo){
+	limparBuffer();
+	char nomeProcurado[50];
+	printf("Digite o nome a ser consultado.\n");
+	scanf("%50[^\n]", nomeProcurado);
+	converteMaiusculas(nomeProcurado);
+	
+	struct PESSOA* pessoaEncontrado = pesquisaSequencial(nomeProcurado, tipo);
+	
+	if (pessoaEncontrado != NULL) {
+        printf("Pessoa encontrada:\n");
+        printf("Codigo: %d\n", pessoaEncontrado->cod_pessoa);
+        printf("Nome: %s\n", pessoaEncontrado->nome_pessoa);
+        printf("CPF: %s\n", pessoaEncontrado->cpf);
+        printf("Data de Nascimento: %s\n", pessoaEncontrado->data_nascimento);
+        printf("Ativo: %s\n", pessoaEncontrado->ativo ? "SIM" : "NAO");
+    } else {
+        printf("Pessoa com nome '%s' nao encontrada.\n", nomeProcurado);
+    }
+    
+    limparBuffer();
+    getchar();
+}
+
+struct PESSOA* pesquisaSequencial(const char* nomeBusca, bool tipo) {
+    auxPessoa = topoPessoa;
+    
+    while (auxPessoa != NULL) {
+        if (strstr(auxPessoa->nome_pessoa, nomeBusca) != NULL) {
+            if (auxPessoa->professor == tipo){
+            	return auxPessoa;
+			}
+        }
+        auxPessoa = auxPessoa->proximo;
+    }
+    
+    return NULL;
+}
 
 bool validar_cpf_formatado(const char *cpf) {
 	if (strlen(cpf) != 14)//strlen só vê até o espaço antes o \0, por isso 14
@@ -54,7 +95,8 @@ void MenuPessoa(bool tipo)  //1 = professor, 0 = aluno
 		printf("1 - Adicionar professor\n");
 		printf("2 - Listar professores\n");
 		printf("3 - Gerenciar professor\n");
-		printf("4 - Voltar \n");
+		printf("4 - Buscar professor\n");
+		printf("5 - Voltar \n");
 		
 		scanf("%d", &escolhaMenu);
 		limparBuffer();
@@ -72,6 +114,9 @@ void MenuPessoa(bool tipo)  //1 = professor, 0 = aluno
 				GerenciarPessoa(true);
 				break;
 			case 4:
+				buscarPessoa(true);
+				break;
+			case 5:
 				return;
 		}
 		
@@ -81,7 +126,8 @@ void MenuPessoa(bool tipo)  //1 = professor, 0 = aluno
 		printf("1 - Adicionar aluno\n");
 		printf("2 - Listar alunos\n");
 		printf("3 - Gerenciar aluno\n");
-		printf("4 - Voltar \n");
+		printf("4 - Buscar aluno\n");
+		printf("5 - Voltar \n");
 		
 		scanf("%d", &escolhaMenu);
 		limparBuffer();
@@ -99,6 +145,9 @@ void MenuPessoa(bool tipo)  //1 = professor, 0 = aluno
 				GerenciarPessoa(false);
 				break;
 			case 4:
+				buscarPessoa(false);
+				break;
+			case 5:
 				return;
 		}
 	}
@@ -128,8 +177,11 @@ void CriarPessoa(bool tipo)
 	auxPessoa->ativo = true;
 	
 	system("cls");
+	char nome[50];
 	printf("Nome completo:\n");
-	scanf(" %50[^\n]", auxPessoa->nome_pessoa);
+	scanf(" %50[^\n]", nome);
+	converteMaiusculas(nome);
+	strcpy(auxPessoa->nome_pessoa, nome);
 	limparBuffer();
 	do {
 		fflush(stdin);
@@ -311,10 +363,10 @@ void GerenciarPessoa(bool tipo){
 	
 	if (tipo){
 		ListarPessoas(tipo);
-		printf("\nInsira o nome do professor a ser gerenciado\n");
+		printf("\nInsira o codigo do professor a ser gerenciado\n");
 	} else {
 		ListarPessoas(tipo);
-		printf("\nInsira o nome do aluno a ser gerenciado\n");
+		printf("\nInsira o codigo do aluno a ser gerenciado\n");
 	}
 	
 	int cdPessoa = 0;
@@ -324,6 +376,7 @@ void GerenciarPessoa(bool tipo){
 	
 	if (!localizarPessoa){
 		printf("%s nao localizado\n", tipo ? "Professor" : "Aluno");
+		limparBuffer();
 		getchar();
 		return;
 	}
@@ -335,7 +388,6 @@ void GerenciarPessoa(bool tipo){
 	if (tipo){
 		printf("1-Inativar/Ativar professor\n2-Editar nome do professor\n3-Editar CPF do professor\n4-Editar data de nascimento do professor\n5-Voltar\n");
 	} else {
-		int escolha = 0;
 		printf("1-Inativar/Ativar aluno\n2-Editar nome do aluno\n3-Editar CPF do aluno\n4-Editar data de nascimento do aluno\n5-Voltar\n");
 	}
 	
@@ -368,6 +420,7 @@ void GerenciarPessoa(bool tipo){
 			while (auxPessoa != NULL){
 				if (auxPessoa->cod_pessoa == cdPessoa){
 					char nomeAntigo[50];
+					converteMaiusculas(novoNome);
 					strcpy(nomeAntigo, auxPessoa->nome_pessoa);
 					strcpy(auxPessoa->nome_pessoa, novoNome);
 					limparBuffer();

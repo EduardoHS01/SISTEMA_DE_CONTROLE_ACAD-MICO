@@ -138,7 +138,7 @@ void escrever_curso_disciplina()
         perror("Erro ao abrir arquivo");
         return;
     }
-    // Cabe?alho do CSV
+    // Cabeçalho do CSV
     fprintf(file, "Cod_curso_disciplina,Cod_curso,Cod_disciplina,Periodo\n");
     
     struct CURSO_DISCIPLINA *atual = topoCursoDisciplina;
@@ -164,7 +164,7 @@ void ler_curso_disciplina() {
     }
     
     char linha[256];
-    // Ignora cabe?alho
+    // Ignora cabeçalho
     if (fgets(linha, sizeof(linha), file) == NULL) {
         fclose(file);
         return;

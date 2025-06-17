@@ -1,1 +1,4 @@
-Codigo,NomeData,AtivoProfessor
+Codigo,Nome,Ativo
+1,CIENCIAS,1
+2,PORTUGUES,0
+3,GEOGRAFIA,1

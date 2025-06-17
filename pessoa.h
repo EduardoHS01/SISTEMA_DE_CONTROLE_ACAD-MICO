@@ -30,5 +30,7 @@ void escrever_pessoa();
 void ler_pessoa();
 void GerenciarPessoa(bool tipo);
 bool localizaPessoa(int cdPessoa, bool tipo);
+void buscarPessoa(bool tipo);
+struct PESSOA* pesquisaSequencial(const char* nomeBusca, bool tipo);
 
 #endif

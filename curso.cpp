@@ -19,9 +19,9 @@ void MenuCurso()
 	int escolhaMenu;
 	
 	system("cls");
-	printf("1 - Criar curso OK\n");
-	printf("2 - Listar cursos OK\n");
-	printf("3 - Gerenciar curso NOK\n");
+	printf("1 - Criar curso\n");
+	printf("2 - Listar cursos\n");
+	printf("3 - Gerenciar curso\n");
 	printf("4 - Voltar \n");
 	
 	scanf("%d", &escolhaMenu);
@@ -35,6 +35,9 @@ void MenuCurso()
 		case 2:
 			ListarCursos();
 			getchar();
+			break;
+		case 3:
+			GerenciarCurso();
 			break;
 		case 4:
 			return;
@@ -64,14 +67,18 @@ void ListarCursos()
 
 void CadastrarCurso()
 {
+	limparBuffer();
 	ultimoCodigoCurso++;
 	
 	auxCurso = (struct CURSO*)malloc(sizeof(struct CURSO));
 	auxCurso->cod_curso = ultimoCodigoCurso;
 	
 	system("cls");
+	char nomeCurso[50];
 	printf("Qual o nome do curso?\n");
-	scanf(" %50[^\n]", auxCurso->nome_curso);
+	scanf(" %50[^\n]", nomeCurso);
+	converteMaiusculas(nomeCurso);
+	strcpy(auxCurso->nome_curso, nomeCurso);
 	limparBuffer();
 	printf("Quantos periodos tem o curso?\n");
 	scanf("%d", &auxCurso->periodos);
@@ -88,6 +95,94 @@ void CadastrarCurso()
 	auxCurso->proximo = NULL;
 	fimCurso = auxCurso;
 };
+
+void GerenciarCurso(){
+	system("cls");
+	limparBuffer();
+	
+	if (topoCurso == NULL){
+		return;
+	}
+	
+	int cdCurso = 0;
+	
+	ListarCursos();
+	printf("\nInsira o codigo do curso a ser gerenciado\n");
+	scanf("%d", &cdCurso);
+	
+	bool localizaCurso = localizarCurso(cdCurso);
+	
+	if (!localizaCurso){
+		printf("Curso nao localizado");
+		return;
+	}
+	
+	system("cls");
+	limparBuffer();
+	
+	int escolha = 0;
+	printf("1-Editar nome do curso\n2-Editar numero de periodos\n3-Voltar\n");
+	scanf("%d", &escolha);
+	
+	switch (escolha){
+		case 1:
+			char novoNome[50];
+			auxCurso = topoCurso;
+			printf("Insira o novo nome\n");
+			scanf("%s", novoNome);
+			while (auxCurso != NULL){
+				if (auxCurso->cod_curso == cdCurso){
+					char nomeAntigo[50];
+					converteMaiusculas(novoNome);
+					strcpy(nomeAntigo, auxCurso->nome_curso);
+					strcpy(auxCurso->nome_curso, novoNome);
+					limparBuffer();
+					printf("Nome antigo: %s\nNovo nome: %s", nomeAntigo, auxCurso->nome_curso);
+					getchar();
+				}
+				
+				auxCurso = auxCurso->proximo;
+			}
+			break;
+			
+		case 2:
+			int novoPeriodo = 0;
+			int periodoAntigo = 0;
+			auxCurso = topoCurso;
+			while (auxCurso != NULL){
+				if (auxCurso->cod_curso == cdCurso){
+					printf("Insira a nova quantidade de periodos\n");
+					scanf("%d", &novoPeriodo);
+					periodoAntigo = auxCurso->periodos;
+					auxCurso->periodos = novoPeriodo;
+					limparBuffer();
+					printf("Nome antigo: %s\nNovo nome: %s", periodoAntigo, auxCurso->periodos);
+					getchar();
+				}
+				
+				auxCurso = auxCurso->proximo;
+			}
+			break;
+	}
+
+}
+
+bool localizarCurso(int cdCurso){
+	bool encontrouCurso = false;
+	auxCurso = topoCurso;
+	while (auxCurso != NULL){
+		if (auxCurso->cod_curso == cdCurso){
+			encontrouCurso = true;	
+		}
+		auxCurso = auxCurso->proximo;
+	}
+	
+	if (encontrouCurso){
+		return true;
+	} else {
+		return false;
+	}
+}
 
 void escrever_curso()
 {
